@@ -5,7 +5,7 @@ organization := "com.typesafe"
 
 name := "sbt-scalariform"
 
-version := "0.1"
+version := "0.1.1"
 
 libraryDependencies += "org.scalariform" %% "scalariform" % "0.1.0"
 

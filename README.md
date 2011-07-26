@@ -14,7 +14,7 @@ To use the plugin in a project add the following to `project/plugins/build.sbt`:
 
     resolvers += "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/"
 
-    libraryDependencies += "com.typesafe" %% "sbt-scalariform" % "0.1"
+    libraryDependencies += "com.typesafe" %% "sbt-scalariform" % "0.1.1"
 
 
 Add settings

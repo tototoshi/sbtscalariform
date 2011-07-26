@@ -34,7 +34,7 @@ object ScalariformPlugin {
 
   def cached(cache: File)(log: String => Unit)(update: Set[File] => Unit) = {
     FileFunction.cached(cache)(FilesInfo.hash, FilesInfo.exists) { (in, out) =>
-      val files = in.modified
+      val files = in.modified -- in.removed
       Util.counted("Scala source", "", "s", files.size) foreach { count => log(count) }
       update(files)
       files
@@ -49,9 +49,11 @@ object ScalariformPlugin {
       val logReformatted = (count: String) => s.log.info("Reformatted %s %s" format (count, label))
       val formatting = cached(cache)(logFormatting) { files =>
         for (file <- files) {
-          val contents = IO.read(file)
-          val formatted = ScalaFormatter.format(contents, preferences)
-          if (formatted != contents) IO.write(file, formatted)
+          if (file.exists) {
+            val contents = IO.read(file)
+            val formatted = ScalaFormatter.format(contents, preferences)
+            if (formatted != contents) IO.write(file, formatted)
+          }
         }
       }
       val reformatted = cached(cache)(logReformatted) { files => () }
