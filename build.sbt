@@ -1,14 +1,14 @@
 
 sbtPlugin := true
 
-organization := "com.typesafe.sbt-scalariform"
+organization := "com.typesafe.sbtscalariform"
 
 name := "sbt-scalariform"
 
-version := "0.1.3-SNAPSHOT"
+version := "0.1.4-SNAPSHOT"
 
-libraryDependencies += "org.scalariform" %% "scalariform" % "0.1.0"
+libraryDependencies += "org.scalariform" % "scalariform_2.9.0" % "0.1.0"
 
-publishMavenStyle := true
+publishMavenStyle := false
 
-publishTo := Some("Typesafe Publish Repo" at "http://repo.typesafe.com/typesafe/maven-releases/")
+publishTo := Some("Typesafe Publish Repo" at "http://repo.typesafe.com/typesafe/ivy-releases/")

@@ -1,7 +1,7 @@
 sbt-scalariform
 ===============
 
-[Scalariform][scalariform] plugin for [sbt]. This plugin requires sbt 0.10.1.
+[Scalariform][scalariform] plugin for [sbt]. This plugin requires sbt 0.11.0-RC1.
 
 [sbt]: https://github.com/harrah/xsbt
 [scalariform]: https://github.com/mdr/scalariform
@@ -10,11 +10,11 @@ sbt-scalariform
 Add plugin
 ----------
 
-To use the plugin in a project add the following to `project/plugins/build.sbt`:
+To use the plugin in a project add the following to `project/plugins.sbt`:
 
     resolvers += "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/"
 
-    libraryDependencies += "com.typesafe.sbt-scalariform" %% "sbt-scalariform" % "0.1.2"
+    addSbtPlugin("com.typesafe.sbtscalariform" % "sbt-scalariform" % "0.1.3")
 
 
 Add settings
@@ -25,9 +25,11 @@ formatted.
 
 In an sbt light definition:
 
-    seq(ScalariformPlugin.settings: _*)
+    seq(com.typesafe.sbtscalariform.ScalariformPlugin.settings: _*)
 
 In an sbt full definition:
+
+    import com.typesafe.sbtscalariform.ScalariformPlugin
 
     lazy val someProject = Project(
       id = "some-project",

@@ -1,3 +1,5 @@
+package com.typesafe.sbtscalariform
+
 import sbt._
 import sbt.Keys._
 import sbt.Project.Setting
@@ -28,7 +30,7 @@ object ScalariformPlugin {
     format <<= formatTask
   )
 
-  def collectSourceFiles = (formatSourceDirectories, formatSourceFilter, defaultExcludes in formatSources) map {
+  def collectSourceFiles = (formatSourceDirectories, formatSourceFilter, excludeFilter in formatSources) map {
     (dirs, filter, excludes) => dirs.descendentsExcept(filter, excludes).get
   }
 
