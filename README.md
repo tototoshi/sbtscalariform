@@ -12,9 +12,9 @@ Add plugin
 
 To use the plugin in a project add the following to `project/plugins.sbt`:
 
-    resolvers += "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/"
+    resolvers += Classpaths.typesafeResolver
 
-    addSbtPlugin("com.typesafe.sbtscalariform" % "sbt-scalariform" % "0.1.3")
+    addSbtPlugin("com.typesafe.sbtscalariform" % "sbt-scalariform" % "0.1.4")
 
 
 Add settings
