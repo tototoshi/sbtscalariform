@@ -1,7 +1,7 @@
 sbt-scalariform
 ===============
 
-[Scalariform][scalariform] plugin for [sbt]. This plugin requires sbt 0.11.0-RC1.
+[Scalariform][scalariform] plugin for [sbt]. This plugin requires sbt 0.11.0.
 
 [sbt]: https://github.com/harrah/xsbt
 [scalariform]: https://github.com/mdr/scalariform
