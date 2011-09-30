@@ -40,6 +40,8 @@ In an sbt full definition:
 Using `ScalariformPlugin.settings` will automatically format sources when
 `compile` or `test:compile` are run.
 
+If you don't want this automatic formatting, use `ScalariformPlugin.defaultSettings` and execute `format` or `test:format` explicitly.
+
 
 Configure scalariform
 ---------------------
