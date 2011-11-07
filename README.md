@@ -1,7 +1,7 @@
 sbt-scalariform
 ===============
 
-[Scalariform][scalariform] plugin for [sbt]. This plugin requires sbt 0.11.0.
+[Scalariform][scalariform] plugin for [sbt]. This plugin requires sbt 0.11.
 
 [sbt]: https://github.com/harrah/xsbt
 [scalariform]: https://github.com/mdr/scalariform
@@ -14,7 +14,7 @@ To use the plugin in a project add the following to `project/plugins.sbt`:
 
     resolvers += Classpaths.typesafeResolver
 
-    addSbtPlugin("com.typesafe.sbtscalariform" % "sbt-scalariform" % "0.1.4")
+    addSbtPlugin("com.typesafe.sbtscalariform" % "sbt-scalariform" % "0.2.0")
 
 
 Add settings

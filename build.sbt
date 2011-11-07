@@ -1,14 +1,21 @@
 
-sbtPlugin := true
-
 organization := "com.typesafe.sbtscalariform"
 
 name := "sbt-scalariform"
 
-version := "0.1.5-SNAPSHOT"
+version := "0.2.0-SNAPSHOT"
 
-libraryDependencies += "org.scalariform" % "scalariform_2.9.0" % "0.1.0"
+sbtPlugin := true
+
+libraryDependencies += "org.scalariform" %% "scalariform" % "0.1.1"
+
+scalacOptions ++= Seq("-unchecked", "-deprecation")
+
+publishTo <<= (version) { v =>
+  import Classpaths._
+  Option(if (v endsWith "SNAPSHOT") typesafeSnapshots else typesafeResolver)
+}
 
 publishMavenStyle := false
 
-publishTo := Option(Classpaths.typesafeResolver)
+credentials += Credentials(Path.userHome / ".ivy2" / ".typesafe-credentials")
