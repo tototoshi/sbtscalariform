@@ -1,7 +1,7 @@
 
 organization := "com.typesafe.sbtscalariform"
 
-name := "sbt-scalariform"
+name := "sbtscalariform"
 
 version := "0.2.0-SNAPSHOT"
 

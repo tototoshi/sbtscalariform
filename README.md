@@ -1,5 +1,5 @@
-sbt-scalariform
-===============
+sbtscalariform
+==============
 
 [Scalariform][scalariform] plugin for [sbt]. This plugin requires sbt 0.11.
 
@@ -14,18 +14,19 @@ To use the plugin in a project add the following to `project/plugins.sbt`:
 
     resolvers += Classpaths.typesafeResolver
 
-    addSbtPlugin("com.typesafe.sbtscalariform" % "sbt-scalariform" % "0.2.0")
+    addSbtPlugin("com.typesafe.sbtscalariform" % "sbtscalariform" % "0.2.0-SNAPSHOT")
 
 
 Add settings
 ------------
 
-Add the scalariform plugin settings to projects that should have their sources
-formatted.
+Add the scalariform plugin settings to projects that should have their sources formatted.
 
 In an sbt light definition:
 
-    seq(com.typesafe.sbtscalariform.ScalariformPlugin.settings: _*)
+    import com.typesafe.sbtscalariform.ScalariformPlugin._
+
+    seq(scalariformSettings: _*)
 
 In an sbt full definition:
 
@@ -34,25 +35,25 @@ In an sbt full definition:
     lazy val someProject = Project(
       id = "some-project",
       base = file("."),
-      settings = Defaults.defaultSettings ++ ScalariformPlugin.settings
-    )
+      settings = Defaults.defaultSettings ++ ScalariformPlugin.scalariformSettings)
 
-Using `ScalariformPlugin.settings` will automatically format sources when
-`compile` or `test:compile` are run.
+Using `ScalariformPlugin.scalariformSettings` will automatically format sources when `compile` or `test:compile` are run.
 
-If you don't want this automatic formatting, use `ScalariformPlugin.defaultSettings` and execute `format` or `test:format` explicitly.
+If you don't want this automatic formatting, use `ScalariformPlugin.baseScalariformSettings` like below and execute `format` or `test:format` explicitly:
+
+    import com.typesafe.sbtscalariform.ScalariformPlugin._
+
+    seq((inConfig(Compile)(baseScalariformSettings) ++ inConfig(Test)(baseScalariformSettings)): _*)
 
 
 Configure scalariform
 ---------------------
 
-Configure scalariform using the `formatPreferences` setting and a scalariform
-`FormattingPreferences` object. For example:
+Configure scalariform using the `formatPreferences` setting and a scalariform `FormattingPreferences` object. For example:
 
-    lazy val formatSettings = ScalariformPlugin.settings ++ Seq(
+    lazy val formatSettings = ScalariformPlugin.scalariformSettings ++ Seq(
       formatPreferences in Compile := formattingPreferences,
-      formatPreferences in Test    := formattingPreferences
-    )
+      formatPreferences in Test    := formattingPreferences)
 
     def formattingPreferences = {
       import scalariform.formatter.preferences._
