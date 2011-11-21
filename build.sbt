@@ -3,7 +3,7 @@ organization := "com.typesafe.sbtscalariform"
 
 name := "sbtscalariform"
 
-version := "0.2.0-SNAPSHOT"
+// version is defined in version.sbt in order to support sbt-release
 
 sbtPlugin := true
 
