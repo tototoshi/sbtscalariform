@@ -14,7 +14,7 @@ To use the plugin in a project add the following to `project/plugins.sbt`:
 
     resolvers += Classpaths.typesafeResolver
 
-    addSbtPlugin("com.typesafe.sbtscalariform" % "sbtscalariform" % "0.2.0-SNAPSHOT")
+    addSbtPlugin("com.typesafe.sbtscalariform" % "sbtscalariform" % "0.2.0")
 
 
 Add settings
