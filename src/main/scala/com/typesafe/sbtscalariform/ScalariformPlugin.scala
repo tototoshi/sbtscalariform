@@ -16,87 +16,116 @@
 
 package com.typesafe.sbtscalariform
 
-import java.io.File
 import sbt._
 import sbt.Keys._
-import sbt.Project.Setting
 import scalariform.formatter.ScalaFormatter
-import scalariform.formatter.preferences.{ DoubleIndentClassDeclaration, FormattingPreferences, IFormattingPreferences }
+import scalariform.formatter.preferences.{ FormattingPreferences, IFormattingPreferences }
 import scalariform.parser.ScalaParserException
 
-object ScalariformPlugin {
+object ScalariformPlugin extends Plugin {
+
+  def scalariformSettings: Seq[Setting[_]] = {
+    import ScalariformKeys._
+    defaultScalariformSettings ++ Seq(
+      compileInputs in Compile <<= (compileInputs in Compile) dependsOn (format in Compile),
+      compileInputs in Test <<= (compileInputs in Test) dependsOn (format in Test)
+    )
+  }
+
+  def defaultScalariformSettings: Seq[Setting[_]] = {
+    val needToBeScoped = needToBeScopedScalariformSettings
+    noNeedToBeScopedScalariformSettings ++ inConfig(Compile)(needToBeScoped) ++ inConfig(Test)(needToBeScoped)
+  }
+
+  def needToBeScopedScalariformSettings: Seq[Setting[_]] = {
+    import ScalariformKeys._
+    List(
+      format <<= (
+        preferences,
+        scalaSource,
+        includeFilter in format,
+        excludeFilter in format,
+        thisProjectRef,
+        configuration,
+        cacheDirectory,
+        streams
+      ) map formatTask
+    )
+  }
+
+  def noNeedToBeScopedScalariformSettings: Seq[Setting[_]] = {
+    import ScalariformKeys._
+    List(
+      preferences := defaultPreferences,
+      includeFilter in format := "*.scala"
+    )
+  }
+
+  private def defaultPreferences = {
+    import scalariform.formatter.preferences._
+    FormattingPreferences().
+      setPreference(DoubleIndentClassDeclaration, true).
+      setPreference(PreserveDanglingCloseParenthesis, true)
+  }
+
+  private def formatTask(
+    preferences: IFormattingPreferences,
+    scalaSource: File,
+    includeFilter: FileFilter,
+    excludeFilter: FileFilter,
+    ref: ProjectRef,
+    configuration: Configuration,
+    cacheDirectory: File,
+    streams: TaskStreams) = {
+    try {
+      val files = scalaSource.descendentsExcept(includeFilter, excludeFilter).get.toSet
+      val cache = cacheDirectory / "scalariform"
+      val logFun = log("%s(%s)".format(Project.display(ref), configuration), streams.log) _
+      handleFiles(files, cache, logFun("Formatting %s %s ..."), performFormat(preferences))
+      handleFiles(files, cache, logFun("Reformatted %s %s."), _ => ()).toSeq // recalculate cache because we're formatting in-place
+    } catch {
+      case e: ScalaParserException =>
+        streams.log.error("Scalariform parser error: see compile for details")
+        Nil
+    }
+  }
+
+  private def log(label: String, logger: Logger)(message: String)(count: String) =
+    logger.info(message.format(count, label))
+
+  private def handleFiles(
+    files: Set[File],
+    cache: File,
+    logFun: String => Unit,
+    updateFun: Set[File] => Unit) =
+    FileFunction.cached(cache)(FilesInfo.hash, FilesInfo.exists)(handleUpdate(logFun, updateFun))(files)
+
+  private def performFormat(preferences: IFormattingPreferences)(files: Set[File]) =
+    for (file <- files if file.exists) {
+      val contents = IO.read(file)
+      val formatted = ScalaFormatter.format(contents, preferences)
+      if (formatted != contents) IO.write(file, formatted)
+    }
+
+  private def handleUpdate(
+    logFun: String => Unit,
+    updateFun: Set[File] => Unit)(
+      in: ChangeReport[File],
+      out: ChangeReport[File]) = {
+    val files = in.modified -- in.removed
+    Util.counted("Scala source", "", "s", files.size) foreach logFun
+    updateFun(files)
+    files
+  }
 
   object ScalariformKeys {
 
-    val formatSourceDirectories: SettingKey[Seq[File]] =
-      SettingKey[Seq[File]]("format-source-directories")
-
-    val formatSourceFilter: SettingKey[FileFilter] =
-      SettingKey[FileFilter]("format-source-filter")
-
-    val formatSources: TaskKey[Seq[File]] =
-      TaskKey[Seq[File]]("format-sources")
-
-    val formatPreferences: SettingKey[IFormattingPreferences] =
-      SettingKey[IFormattingPreferences]("format-preferences")
-
     val format: TaskKey[Seq[File]] =
-      TaskKey[Seq[File]]("format", "Format scala sources using scalariform")
-  }
+      TaskKey[Seq[File]](prefix("format"), "Format (Scala) sources using scalariform.")
 
-  import ScalariformKeys._
+    val preferences: SettingKey[IFormattingPreferences] =
+      SettingKey[IFormattingPreferences](prefix("preferences"), "Scalariform formatting preferences, e.g. indentation.")
 
-  def scalariformSettings: Seq[Setting[_]] =
-    inConfig(Compile)(baseScalariformSettings) ++ inConfig(Test)(baseScalariformSettings) ++ Seq(
-      compileInputs in Compile <<= (compileInputs in Compile) dependsOn (format in Compile),
-      compileInputs in Test <<= (compileInputs in Test) dependsOn (format in Test))
-
-  def baseScalariformSettings: Seq[Setting[_]] =
-    Seq(
-      formatSourceDirectories <<= Seq(scalaSource).join,
-      formatSourceFilter := "*.scala",
-      formatSources <<= collectSourceFiles,
-      formatPreferences := FormattingPreferences().setPreference(DoubleIndentClassDeclaration, true),
-      format <<= formatTask)
-
-  private def collectSourceFiles =
-    (formatSourceDirectories, formatSourceFilter, excludeFilter in formatSources) map {
-      (dirs, filter, excludes) => dirs.descendentsExcept(filter, excludes).get
-    }
-
-  private def formatTask =
-    (formatSources, formatPreferences, thisProjectRef, configuration, cacheDirectory, streams) map {
-      (sources, preferences, ref, config, cacheDir, s) =>
-        {
-          val label = "%s(%s)".format(Project.display(ref), config)
-          val cache = cacheDir / "format"
-          val logFormatting = (count: String) => s.log.info("Formatting %s %s...".format(count, label))
-          val logReformatted = (count: String) => s.log.info("Reformatted %s %s".format(count, label))
-          val formatting = cached(cache, logFormatting) { files =>
-            for (file <- files if file.exists) {
-              val contents = IO.read(file)
-              val formatted = ScalaFormatter.format(contents, preferences)
-              if (formatted != contents) IO.write(file, formatted)
-            }
-          }
-          val reformatted = cached(cache, logReformatted) { _ => () }
-          try {
-            formatting(sources.toSet)
-            reformatted(sources.toSet).toSeq // recalculate cache because we're formatting in-place
-          } catch {
-            case e: ScalaParserException =>
-              s.log.error("Scalariform parser error: see compile for details")
-              Nil
-          }
-        }
-    }
-
-  private def cached(cache: File, log: String => Unit)(update: Set[File] => Unit) = {
-    FileFunction.cached(cache)(FilesInfo.hash, FilesInfo.exists) { (in, out) =>
-      val files = in.modified -- in.removed
-      Util.counted("Scala source", "", "s", files.size) foreach log
-      update(files)
-      files
-    }
+    private def prefix(key: String) = "scalariform-" + key
   }
 }
