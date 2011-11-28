@@ -23,3 +23,5 @@ publishTo <<= (version) { version =>
 publishMavenStyle := false
 
 credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+
+seq(scalariformSettings: _*)
