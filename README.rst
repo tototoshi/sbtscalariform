@@ -28,7 +28,7 @@ Adding sbcscalariform settings
 
 - If you installed this plugin locally (see above section) or if you prefer to have more flexibility to tweak your settings on a per project basis, then you should add the below line to your local build definition file *build.sbt* of your project
 
-- In any case, add the below line to your plugin definition, paying attention to the blank line between settings
+- In any case, add the below line to your build definition, paying attention to the blank line between settings
 
 - These settings will add the task *scalariform-format* in the scopes *compile* and *test* and additionally run this task automatically when compiling; for more control see the below section *Configuring sbtscalariform*
 
