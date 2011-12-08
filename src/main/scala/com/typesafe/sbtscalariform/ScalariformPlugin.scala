@@ -40,9 +40,10 @@ object ScalariformPlugin extends Plugin {
   def needToBeScopedScalariformSettings: Seq[Setting[_]] = {
     import ScalariformKeys._
     List(
+      unmanagedSourceDirectories in format <<= Seq(scalaSource).join,
       format <<= (
         preferences,
-        scalaSource,
+        unmanagedSourceDirectories in format,
         includeFilter in format,
         excludeFilter in format,
         thisProjectRef,
@@ -70,7 +71,7 @@ object ScalariformPlugin extends Plugin {
 
   private def formatTask(
     preferences: IFormattingPreferences,
-    scalaSource: File,
+    sourceDirectories: Seq[File],
     includeFilter: FileFilter,
     excludeFilter: FileFilter,
     ref: ProjectRef,
@@ -78,7 +79,7 @@ object ScalariformPlugin extends Plugin {
     cacheDirectory: File,
     streams: TaskStreams) = {
     try {
-      val files = scalaSource.descendentsExcept(includeFilter, excludeFilter).get.toSet
+      val files = sourceDirectories.descendentsExcept(includeFilter, excludeFilter).get.toSet
       val cache = cacheDirectory / "scalariform"
       val logFun = log("%s(%s)".format(Project.display(ref), configuration), streams.log) _
       handleFiles(files, cache, logFun("Formatting %s %s ..."), performFormat(preferences))
