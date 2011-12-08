@@ -15,9 +15,9 @@ Installing sbtscalariform
 - Just add the following lines to your plugin definition, paying attention to the blank line between settings
 
 ::
-  
+
   resolvers += Classpaths.typesafeResolver
-  
+
   addSbtPlugin("com.typesafe.sbtscalariform" % "sbtscalariform" % "0.3.0")
 
 
@@ -71,7 +71,7 @@ If you don't want sbt to automatically format your source files when the tasks *
 Other useful configuration options are provided by common sbt setting keys:
 
 - *includeFilter in format*: Defaults to "*.scala"
-- *excludeFilter in format*: Using the default of sbt 
+- *excludeFilter in format*: Using the default of sbt
 
 For advanced users only: If you need more control over configuration options, you could use these settings instead of the above:
 
@@ -88,7 +88,7 @@ Please use the `sbt mailing list`_ and prefix the subject with "[sbtscalariform]
 Contribution policy
 -------------------
 
-Contributions via GitHub pull requests are gladly accepted from their original author. Along with any pull requests, please state that the contribution is your original work and that you license the work to the groll project under the project's open source license.
+Contributions via GitHub pull requests are gladly accepted from their original author. Along with any pull requests, please state that the contribution is your original work and that you license the work to the sbtscalariform project under the project's open source license.
 
 
 License
