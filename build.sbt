@@ -22,4 +22,4 @@ publishTo <<= (version) { version =>
 
 publishMavenStyle := false
 
-seq(scalariformSettings: _*)
+//seq(scalariformSettings: _*)

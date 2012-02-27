@@ -79,7 +79,7 @@ object ScalariformPlugin extends Plugin {
     cacheDirectory: File,
     streams: TaskStreams) = {
     try {
-      val files = sourceDirectories.descendentsExcept(includeFilter, excludeFilter).get.toSet
+      val files = sourceDirectories.descendantsExcept(includeFilter, excludeFilter).get.toSet
       val cache = cacheDirectory / "scalariform"
       val logFun = log("%s(%s)".format(Project.display(ref), configuration), streams.log) _
       handleFiles(files, cache, logFun("Formatting %s %s ..."), performFormat(preferences))
