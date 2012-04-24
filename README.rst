@@ -21,7 +21,7 @@ Installing sbtscalariform
   addSbtPlugin("com.typesafe.sbtscalariform" % "sbtscalariform" % "0.3.0")
 
 
-Adding sbcscalariform settings
+Adding sbtscalariform settings
 ------------------------------
 
 - If you installed this plugin globally (see above section), then you should add the below line to your global build definition file *build.sbt* in the *~/.sbt/* directory
